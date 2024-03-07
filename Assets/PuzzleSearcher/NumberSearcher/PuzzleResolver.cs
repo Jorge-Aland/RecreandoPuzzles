@@ -1,8 +1,8 @@
-using System;
-using System.Collections;
+
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PuzzleResolver : MonoBehaviour
 {
@@ -25,6 +25,9 @@ public class PuzzleResolver : MonoBehaviour
     
     //Para controlar que se haya pulsado todos los botones necesarios para ganar, que son uno por grupo de botones
     private bool everyNeededButtonPresed = false;
+
+    public UnityEvent OnPuzzleResolved;
+    
     private void Start()
     {
         question.text = "Encuenta el número:" + searchNumber; 
@@ -37,9 +40,32 @@ public class PuzzleResolver : MonoBehaviour
     {
         foreach (var buttonGroup in ButtonGroups) //Por cada grupo de botones en la lista ButtonGroups
         {
-            if (buttonGroup.GetNumber() != null) //Si el número devuelto no es nulo
+            var numberAndOperation = buttonGroup.GetNumber();
+            
+            if (numberAndOperation.numberToReturn != null) //Si el número devuelto no es nulo
             {
-                assistNumber += buttonGroup.GetNumber(); //Guardamos en assisteNumber la suma de los obtenidos en el grupo
+
+                if (numberAndOperation.operationPast == OperationType.sum)
+                {
+                    assistNumber += numberAndOperation.numberToReturn; //Guardamos en assisteNumber la suma de los obtenidos en el grupo
+                }               
+                if (numberAndOperation.operationPast == OperationType.rest)
+                {
+                    assistNumber -= numberAndOperation.numberToReturn; //Guardamos en assisteNumber la resta de los obtenidos en el grupo
+                }               
+                if (numberAndOperation.operationPast == OperationType.multiply)
+                {
+                    assistNumber *= numberAndOperation.numberToReturn; //Guardamos en assisteNumber la multiplicacion de los obtenidos en el grupo
+                }               
+                if (numberAndOperation.operationPast == OperationType.divide)
+                {
+                    assistNumber /= numberAndOperation.numberToReturn; //Guardamos en assisteNumber la divison de los obtenidos en el grupo
+                }
+                
+                //Como lo hace con un foreach la operación siempre irá de izquierda a derecha, por ejemplo si tenemos + + * -, hara suma de los 2
+                // primeros, el resultado se multiplica por el 3 y el resultado de este se resta el 4
+                
+               
             }
 
             result = assistNumber; //Guardamos en resultado el número obtenido antes
@@ -65,7 +91,7 @@ public class PuzzleResolver : MonoBehaviour
 
         if (result == searchNumber && everyNeededButtonPresed) //si se tiene el número buscado y se tienen todos los botones pulsados
         {
-            Debug.Log("se ha conseguido"); //Hemos ganado gente
+            OnPuzzleResolved?.Invoke();
         }
 
 

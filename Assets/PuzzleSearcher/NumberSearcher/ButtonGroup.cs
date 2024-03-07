@@ -5,15 +5,30 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum OperationType //enumerado para el tipo de operación
+{
+    sum,
+    rest,
+    multiply,
+    divide
+}
+
+public struct NumberAndOperation //Necesitamos pasar un struct ya que tiene que recibir el número que está usando y el tipo de operación
+{
+    public int numberToReturn;
+    public OperationType operationPast;
+}
+
 public class ButtonGroup : MonoBehaviour
 {
 
+    private NumberAndOperation numberAndOperation = new NumberAndOperation(); //instanciamos el struct para número y operación
+    
+    [SerializeField] private OperationType operationType; //Para almacenar el tipo de operación que va a tener esa grupo de botones
+    
     //Creamos una lista para almacenar los botones
-    [SerializeField] private List<Button> buttons; 
-    
-    //booleano para controlar si esta lista suma o resta
-    [SerializeField] private bool isSum;
-    
+    [SerializeField] private List<Button> buttons;
+
     //Para guardar el número seleccionado
     private int numberSelected;
     
@@ -46,15 +61,30 @@ public class ButtonGroup : MonoBehaviour
     /// Método para devolver el número seleccionado, se llamara mediante evento para ver si se ha resuelto el puzzle
     /// </summary>
     /// <returns></returns>
-    public int GetNumber()
+    public NumberAndOperation GetNumber()
     {
-        if(isSum) //Si es suma
-        return numberSelected; //Devolvemos el número seleccionado
-
-        else //En caso sontrario
+        if (operationType == OperationType.sum) //Si es suma
         {
-            return -numberSelected; //Devolvemos el negativo del número seleccionado
+            numberAndOperation.numberToReturn = numberSelected;
+            numberAndOperation.operationPast = OperationType.sum;
         }
+        else if (operationType == OperationType.rest) //Si es suma
+        {
+            numberAndOperation.numberToReturn = numberSelected;
+            numberAndOperation.operationPast = OperationType.rest;
+        }
+        else if (operationType == OperationType.multiply) //Si es suma
+        {
+            numberAndOperation.numberToReturn = numberSelected;
+            numberAndOperation.operationPast = OperationType.multiply;
+        }
+        else if (operationType == OperationType.divide) //Si es suma
+        {
+            numberAndOperation.numberToReturn = numberSelected;
+            numberAndOperation.operationPast = OperationType.divide;
+        }
+
+        return numberAndOperation;
     }
 
     /// <summary>
